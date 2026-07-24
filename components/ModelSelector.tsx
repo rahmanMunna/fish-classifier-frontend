@@ -26,7 +26,6 @@ export default function ModelSelector({
       .then((data) => {
         if (cancelled) return;
         setModels(data.models);
-        // Default to the first model if nothing is selected yet
         if (data.models.length > 0 && !selectedModel) {
           onSelectModel(data.models[0]);
         }
@@ -48,7 +47,8 @@ export default function ModelSelector({
 
   if (loading) {
     return (
-      <div className="text-sm text-gray-500">
+      <div className="flex items-center gap-2 text-sm text-slate">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal" />
         Loading available models…
       </div>
     );
@@ -56,32 +56,51 @@ export default function ModelSelector({
 
   if (error) {
     return (
-      <div className="text-sm text-red-600">
+      <p className="rounded-lg border border-error/20 bg-error-bg px-3 py-2 text-sm text-error">
         Could not load models: {error}
-      </div>
+      </p>
     );
   }
 
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor="model-select" className="text-sm font-medium text-gray-700">
-        Select Model
-      </label>
-      <select
-        id="model-select"
-        value={selectedModel}
-        disabled={disabled}
-        onChange={(e) => onSelectModel(e.target.value)}
-        className="rounded-md border border-gray-300 px-3 py-2 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-blue-500
-                   disabled:bg-gray-100 disabled:cursor-not-allowed"
+    <div className="flex flex-col gap-1.5">
+      <label
+        htmlFor="model-select"
+        className="font-mono text-xs uppercase tracking-wide text-slate"
       >
-        {models.map((m) => (
-          <option key={m} value={m}>
-            {m}
-          </option>
-        ))}
-      </select>
+        Model
+      </label>
+      <div className="relative">
+        <select
+          id="model-select"
+          value={selectedModel}
+          disabled={disabled}
+          onChange={(e) => onSelectModel(e.target.value)}
+          className="w-full appearance-none rounded-lg border border-line bg-white px-3.5 py-2.5
+                     text-sm font-medium text-ink outline-none transition-colors
+                     focus:border-teal focus:ring-2 focus:ring-teal/20
+                     disabled:cursor-not-allowed disabled:bg-paper disabled:text-slate-light"
+        >
+          {models.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
+        <svg
+          className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate"
+          viewBox="0 0 12 8"
+          fill="none"
+        >
+          <path
+            d="M1 1.5L6 6.5L11 1.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </div>
   );
 }

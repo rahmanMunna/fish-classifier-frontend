@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 interface GradCamViewerProps {
-  gradcamBase64: string | null; // raw base64 string, no "data:image/png;base64," prefix
-  originalImageUrl: string | null; // object URL from ImageUploader's preview
+  gradcamBase64: string | null;
+  originalImageUrl: string | null;
 }
 
 type ViewMode = "gradcam" | "original" | "side-by-side";
@@ -19,89 +19,72 @@ export default function GradCamViewer({
 
   const gradcamSrc = `data:image/png;base64,${gradcamBase64}`;
 
+  const tabs: { key: ViewMode; label: string }[] = [
+    { key: "original", label: "Original" },
+    { key: "gradcam", label: "Heatmap" },
+    { key: "side-by-side", label: "Compare" },
+  ];
+
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-gray-200 p-4">
-      <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-wide text-gray-400">
-          Grad-CAM Heatmap (Explainability)
+    <div className="rounded-xl border border-line bg-white p-5 shadow-card sm:p-7">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-teal">
+          Grad-CAM Explainability
         </p>
 
-        <div className="flex gap-1 rounded-md bg-gray-100 p-1 text-xs">
-          <button
-            type="button"
-            onClick={() => setViewMode("original")}
-            className={`rounded px-2 py-1 ${
-              viewMode === "original"
-                ? "bg-white shadow font-medium"
-                : "text-gray-500"
-            }`}
-          >
-            Original
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode("gradcam")}
-            className={`rounded px-2 py-1 ${
-              viewMode === "gradcam"
-                ? "bg-white shadow font-medium"
-                : "text-gray-500"
-            }`}
-          >
-            Heatmap
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode("side-by-side")}
-            className={`rounded px-2 py-1 ${
-              viewMode === "side-by-side"
-                ? "bg-white shadow font-medium"
-                : "text-gray-500"
-            }`}
-          >
-            Side-by-side
-          </button>
+        <div className="flex gap-1 rounded-lg bg-bg p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setViewMode(tab.key)}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                viewMode === tab.key
+                  ? "bg-white text-ink shadow-sm"
+                  : "text-slate hover:text-ink"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
       {viewMode === "side-by-side" ? (
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex flex-col items-center gap-1">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="specimen-frame flex flex-col items-center gap-2 rounded-lg bg-bg p-3">
             {originalImageUrl && (
               <img
                 src={originalImageUrl}
                 alt="Original upload"
-                className="max-h-56 rounded-md object-contain"
+                className="max-h-56 rounded object-contain"
               />
             )}
-            <span className="text-xs text-gray-400">Original</span>
+            <span className="font-mono text-[11px] text-slate">Original</span>
           </div>
-          <div className="flex flex-col items-center gap-1">
+          <div className="specimen-frame flex flex-col items-center gap-2 rounded-lg bg-bg p-3">
             <img
               src={gradcamSrc}
               alt="Grad-CAM heatmap"
-              className="max-h-56 rounded-md object-contain"
+              className="max-h-56 rounded object-contain"
             />
-            <span className="text-xs text-gray-400">Grad-CAM Heatmap</span>
+            <span className="font-mono text-[11px] text-slate">Heatmap</span>
           </div>
         </div>
       ) : (
-        <div className="flex justify-center">
+        <div className="specimen-frame flex justify-center rounded-lg bg-bg p-4">
           <img
-            src={
-              viewMode === "original" ? (originalImageUrl ?? "") : gradcamSrc
-            }
-            alt={
-              viewMode === "original" ? "Original upload" : "Grad-CAM heatmap"
-            }
-            className="max-h-72 rounded-md object-contain"
+            src={viewMode === "original" ? (originalImageUrl ?? "") : gradcamSrc}
+            alt={viewMode === "original" ? "Original upload" : "Grad-CAM heatmap"}
+            className="max-h-72 rounded object-contain"
           />
         </div>
       )}
 
-      <p className="text-xs text-gray-400">
-        The heatmap highlights the image regions that most influenced the
-        model&apos;s prediction. Warmer colors (red/yellow) indicate higher
-        influence.
+      <p className="mt-4 text-xs text-slate">
+        Warmer tones (red/yellow) mark the regions that most influenced the
+        model&apos;s decision — a quick visual check on whether it&apos;s
+        looking at the fish, not the background.
       </p>
     </div>
   );

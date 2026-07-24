@@ -8,7 +8,7 @@ interface ImageUploaderProps {
 }
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB — matches backend's limit
+const MAX_SIZE_BYTES = 10 * 1024 * 1024;
 
 export default function ImageUploader({
   onFileSelected,
@@ -28,24 +28,19 @@ export default function ImageUploader({
         setPreviewUrl(null);
         return;
       }
-
       if (!ACCEPTED_TYPES.includes(file.type)) {
-        setError(
-          "Unsupported file type. Please upload a JPG, PNG, or WEBP image.",
-        );
+        setError("Unsupported file type. Use JPG, PNG, or WEBP.");
         onFileSelected(null);
         setPreviewUrl(null);
         return;
       }
-
       if (file.size > MAX_SIZE_BYTES) {
-        setError("File too large. Max allowed size is 10 MB.");
+        setError("File too large. Max size is 10 MB.");
         onFileSelected(null);
         setPreviewUrl(null);
         return;
       }
 
-      // Revoke the previous object URL to avoid a memory leak before creating a new one
       setPreviewUrl((prev) => {
         if (prev) URL.revokeObjectURL(prev);
         return URL.createObjectURL(file);
@@ -55,15 +50,13 @@ export default function ImageUploader({
     [onFileSelected],
   );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     validateAndSetFile(e.target.files?.[0]);
-  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    if (disabled) return;
-    validateAndSetFile(e.dataTransfer.files?.[0]);
+    if (!disabled) validateAndSetFile(e.dataTransfer.files?.[0]);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -71,42 +64,53 @@ export default function ImageUploader({
     if (!disabled) setIsDragging(true);
   };
 
-  const handleDragLeave = () => setIsDragging(false);
-
   const handleClear = () => {
     validateAndSetFile(null);
     if (inputRef.current) inputRef.current.value = "";
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-gray-700">
-        Upload Fish Image
+    <div className="flex flex-col gap-1.5">
+      <label className="font-mono text-xs uppercase tracking-wide text-slate">
+        Fish Photo
       </label>
 
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
+        onDragLeave={() => setIsDragging(false)}
         onClick={() => !disabled && inputRef.current?.click()}
-        className={`flex flex-col items-center justify-center rounded-md border-2 border-dashed
-          p-6 text-center transition-colors cursor-pointer
-          ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"}
-          ${disabled ? "opacity-50 cursor-not-allowed" : "hover:border-blue-400"}`}
+        className={`flex min-h-[9.5rem] cursor-pointer flex-col items-center justify-center
+          rounded-lg border-2 border-dashed p-6 text-center transition-colors
+          ${isDragging ? "border-teal bg-teal/5" : "border-line bg-bg"}
+          ${disabled ? "cursor-not-allowed opacity-50" : "hover:border-teal-light hover:bg-teal/5"}`}
       >
         {previewUrl ? (
           <img
             src={previewUrl}
             alt="Selected fish preview"
-            className="max-h-48 rounded-md object-contain"
+            className="max-h-40 rounded-md object-contain"
           />
         ) : (
           <>
-            <p className="text-sm text-gray-600">
-              Drag & drop a fish image here, or click to browse
+            <svg
+              className="mb-2 h-7 w-7 text-teal-light"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M4 16.5V18a2 2 0 002 2h12a2 2 0 002-2v-1.5M12 3v12m0-12l-4 4m4-4l4 4"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <p className="text-sm font-medium text-ink">
+              Drag & drop, or click to browse
             </p>
-            <p className="mt-1 text-xs text-gray-400">
-              JPG, PNG, or WEBP — max 10MB
+            <p className="mt-0.5 font-mono text-xs text-slate-light">
+              JPG · PNG · WEBP — max 10MB
             </p>
           </>
         )}
@@ -125,13 +129,13 @@ export default function ImageUploader({
         <button
           type="button"
           onClick={handleClear}
-          className="self-start text-xs text-red-600 hover:underline"
+          className="self-start font-mono text-xs text-teal-deep hover:underline"
         >
-          Remove image
+          Remove photo
         </button>
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-error">{error}</p>}
     </div>
   );
 }

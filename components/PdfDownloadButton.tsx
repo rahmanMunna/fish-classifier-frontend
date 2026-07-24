@@ -20,14 +20,10 @@ export default function PdfDownloadButton({
 
   const handleDownload = async () => {
     if (!file || !modelName) return;
-
     setLoading(true);
     setError(null);
-
     try {
       const blob = await generatePdfReport(file, modelName);
-
-      // Trigger a real browser download without navigating away
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -50,17 +46,28 @@ export default function PdfDownloadButton({
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col items-start gap-1.5">
       <button
         type="button"
         onClick={handleDownload}
         disabled={disabled || !file || loading}
-        className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white
-                   hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex items-center gap-2 rounded-lg border border-teal px-4 py-2.5
+                   text-sm font-semibold text-teal transition-colors
+                   hover:bg-teal hover:text-white
+                   disabled:cursor-not-allowed disabled:border-line disabled:text-slate-light disabled:hover:bg-transparent"
       >
-        {loading ? "Generating PDF…" : "📄 Download PDF Report"}
+        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        {loading ? "Generating PDF…" : "Download PDF Report"}
       </button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-error">{error}</p>}
     </div>
   );
 }
