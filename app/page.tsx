@@ -4,7 +4,7 @@ import { useState } from "react";
 import ModelSelector from "@/components/ModelSelector";
 import ImageUploader from "@/components/ImageUploader";
 import PredictionResult from "@/components/PredictionResult";
-import GradCamViewer from "@/components/GradCamViewer";
+// import GradCamViewer from "@/components/GradCamViewer";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import { predictImage } from "@/lib/api";
 import { ApiError, PredictResponse } from "@/types";
@@ -62,15 +62,16 @@ export default function Home() {
       <section className="scale-texture relative overflow-hidden bg-mist px-4 py-16 sm:py-20">
         <div className="relative mx-auto max-w-3xl text-center">
           <p className="font-mono text-xs tracking-[0.2em] text-teal">
-            ICHTHYOLOGY&nbsp;&middot;&nbsp;COMPUTER VISION&nbsp;&middot;&nbsp;EXPLAINABLE AI
+            ICHTHYOLOGY&nbsp;&middot;&nbsp;COMPUTER
+            VISION&nbsp;&middot;&nbsp;EXPLAINABLE AI
           </p>
           <h1 className="mt-4 font-display text-4xl font-semibold italic text-ink sm:text-5xl">
             Know your catch, instantly.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-balance text-base text-slate sm:text-lg">
-            Upload a photo of a carp and get a species prediction, a
-            confidence score, and a visual explanation of exactly what the
-            model looked at — in seconds.
+            Upload a photo of a carp and get a species prediction, a confidence
+            score, and a visual explanation of exactly what the model looked at
+            — in seconds.
           </p>
         </div>
       </section>
@@ -78,13 +79,29 @@ export default function Home() {
       <section className="border-b border-line bg-surface px-4 py-10">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 sm:grid-cols-3">
           {[
-            { n: "01", title: "Upload", body: "Drop in a clear photo of a single fish." },
-            { n: "02", title: "Analyze", body: "Pick a model and run the classifier." },
-            { n: "03", title: "Explain", body: "See the confidence score and the Grad-CAM heatmap." },
+            {
+              n: "01",
+              title: "Upload",
+              body: "Drop in a clear photo of a single fish.",
+            },
+            {
+              n: "02",
+              title: "Analyze",
+              body: "Pick a model and run the classifier.",
+            },
+            {
+              n: "03",
+              title: "Explain",
+              body: "See the confidence score and the Grad-CAM heatmap.",
+            },
           ].map((step) => (
             <div key={step.n} className="flex flex-col items-start gap-1">
-              <span className="font-mono text-xs font-medium text-gold">{step.n}</span>
-              <h3 className="font-display text-lg font-semibold text-ink">{step.title}</h3>
+              <span className="font-mono text-xs font-medium text-gold">
+                {step.n}
+              </span>
+              <h3 className="font-display text-lg font-semibold text-ink">
+                {step.title}
+              </h3>
               <p className="text-sm text-slate">{step.body}</p>
             </div>
           ))}
@@ -94,8 +111,12 @@ export default function Home() {
       <section className="mx-auto max-w-2xl px-4 py-12 sm:py-16">
         <div className="rounded-xl border border-line bg-surface p-5 shadow-card sm:p-7">
           <div className="mb-5 flex items-baseline justify-between">
-            <h2 className="font-display text-xl font-semibold text-ink">Run a classification</h2>
-            <span className="font-mono text-xs text-slate-light">8 carp species supported</span>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Intelligent Fish Classification System
+            </h2>
+            <span className="font-mono text-xs text-slate-light">
+              8 carp species supported
+            </span>
           </div>
 
           <div className="flex flex-col gap-5">
@@ -105,8 +126,19 @@ export default function Home() {
               disabled={loading}
             />
 
-            <ImageUploader onFileSelected={handleFileSelected} disabled={loading} />
-
+            <ImageUploader
+              onFileSelected={handleFileSelected}
+              disabled={loading}
+            />
+            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+                <span className="font-semibold text-blue-700">
+                  Supported Species:
+                </span>{" "}
+                Black Rohu, Catla, Common Carp, Grass Carp, Mrigal, Rohu, Silver
+                Carp, and Mirror Carp.
+              </p>
+            </div>
             <button
               type="button"
               onClick={handleClassify}
@@ -129,8 +161,15 @@ export default function Home() {
         {result && (
           <div className="mt-8 flex flex-col gap-8">
             <PredictionResult result={result} />
-            <GradCamViewer gradcamBase64={result.gradcam} originalImageUrl={previewUrl} />
-            <PdfDownloadButton file={selectedFile} modelName={selectedModel} disabled={loading} />
+            {/* <GradCamViewer
+              gradcamBase64={result.gradcam}
+              originalImageUrl={previewUrl}
+            /> */}
+            <PdfDownloadButton
+              file={selectedFile}
+              modelName={selectedModel}
+              disabled={loading}
+            />
           </div>
         )}
       </section>
@@ -139,7 +178,8 @@ export default function Home() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="font-display text-sm italic text-slate">Carp Vision</p>
           <p className="mt-1 text-xs text-slate-light">
-            A thesis project on explainable deep learning for freshwater carp species identification.
+            A thesis project on explainable deep learning for freshwater carp
+            species identification.
           </p>
         </div>
       </footer>
